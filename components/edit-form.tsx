@@ -27,6 +27,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
+import { Todo } from "@/lib/types/todos";
 
 const formSchema = z.object({
   task: z
@@ -35,12 +36,6 @@ const formSchema = z.object({
     .max(500, "Task must be at most 500 characters."),
   is_complete: z.boolean(),
 });
-
-interface Todo {
-  id: number;
-  task: string;
-  is_complete: boolean;
-}
 
 export function EditForm({ todo }: { todo: Todo }) {
   const form = useForm<z.infer<typeof formSchema>>({
