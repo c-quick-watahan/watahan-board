@@ -1,9 +1,9 @@
-import { EditForm } from "@/components/ui/edit-form";
+import { EditForm } from "@/components/edit-form";
 import { createClient } from "@/lib/supabase/server";
 export default async function EditTodoPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: number };
 }) {
   const { id } = await params;
   const supabase = await createClient();
