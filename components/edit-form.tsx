@@ -55,7 +55,6 @@ export function EditForm({ todo }: { todo: Todo }) {
       ),
       position: "bottom-right",
     });
-    console.log(data);
   }
 
   return (
