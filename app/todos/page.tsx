@@ -13,8 +13,15 @@ import {
 import Link from "next/link";
 
 import { useEffect, useState } from "react";
-import { getTodos, getUserId, Todo } from "@/supabase/database/todo";
+import {
+  deleteTodo,
+  getTodos,
+  getUserId,
+  Todo,
+} from "@/supabase/database/todo";
 import { SkeletonCard } from "@/components/ui/skeleton-card";
+import { toast } from "sonner";
+import { refresh } from "next/cache";
 
 function truncateString(str: string) {
   const maxLength: number = 30;
@@ -40,6 +47,23 @@ export default function Instruments() {
 
     fetchData();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    const response = await deleteTodo(id);
+    let msg = "";
+    if (response.error) msg = `${response.error}`;
+    else msg = "Task deleted successfully";
+
+    toast(msg, {
+      description: (
+        <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
+          <code>{JSON.stringify(id, null, 2)}</code>
+        </pre>
+      ),
+      position: "bottom-right",
+    });
+    setTodos(todos?.filter((todo) => todo.id !== id));
+  };
 
   if (loading) {
     return <SkeletonCard />; // Your loading UI
@@ -70,7 +94,10 @@ export default function Instruments() {
                       {item.task ? truncateString(item.task) : item.task}
                     </CardTitle>
                     <CardAction>
-                      <button className="text-slate-400 hover:text-red-500 transition-colors">
+                      <button
+                        onClick={async () => handleDelete(item.id)}
+                        className="text-slate-400 hover:text-red-500 transition-colors"
+                      >
                         <MdDeleteForever className="h-5 w-5" />
                       </button>
                     </CardAction>

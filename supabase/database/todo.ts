@@ -38,7 +38,5 @@ export async function deleteTodo(id: number) {
 
   const response = await supabase.from("todos").delete().eq("id", id);
 
-  revalidatePath("/todos");
-
   return response;
 }
