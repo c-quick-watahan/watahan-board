@@ -102,9 +102,6 @@ export default function Instruments() {
                       </button>
                     </CardAction>
                   </div>
-                  <CardDescription className="text-sm text-slate-500 dark:text-slate-400">
-                    {item.is_complete ? "Completed" : "In Progress"}
-                  </CardDescription>
                 </CardHeader>
 
                 <CardContent>
