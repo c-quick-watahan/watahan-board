@@ -31,6 +31,18 @@ export async function getTodos(): Promise<Todo[]> {
   return data;
 }
 
+export async function addTodo(task: string){
+  const supabase = await createClient();
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('todos')  
+    .insert({ user_id: userId, task: task, is_complete: false})  
+    .select()
+
+    if (error) throw error;
+      return data;
+}
+
 export async function updateTodo(id: number, task: string, is_complete: boolean): Promise<Todo[]> {
   const supabase = await createClient();
 

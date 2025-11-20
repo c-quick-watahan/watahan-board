@@ -18,22 +18,22 @@ export type Database = {
         Row: {
           id: number
           inserted_at: string
-          is_complete: boolean | null
-          task: string | null
+          is_complete: boolean
+          task: string
           user_id: string
         }
         Insert: {
           id?: number
           inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
+          is_complete?: boolean
+          task: string
           user_id: string
         }
         Update: {
           id?: number
           inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
+          is_complete?: boolean
+          task?: string
           user_id?: string
         }
         Relationships: []
