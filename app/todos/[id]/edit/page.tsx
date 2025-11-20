@@ -1,17 +1,13 @@
 import { EditForm } from "@/components/edit-form";
-import { createClient } from "@/lib/supabase/server";
+import { getTodoById } from "@/supabase/database/todo";
 export default async function EditTodoPage({
   params,
 }: {
   params: { id: number };
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: todo } = await supabase
-    .from("todos")
-    .select()
-    .eq("id", id)
-    .single();
+  const todo = await getTodoById(id);
+  if (!todo) throw Error;
 
   return <EditForm todo={todo} />; // Client component with Server Action
 }

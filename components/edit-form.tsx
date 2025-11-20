@@ -27,7 +27,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { Todo } from "@/lib/types/todos";
+import { Todo, updateTodo } from "@/supabase/database/todo";
 
 const formSchema = z.object({
   task: z
@@ -41,16 +41,22 @@ export function EditForm({ todo }: { todo: Todo }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      task: todo.task,
-      is_complete: todo.is_complete,
+      task: todo.task ?? undefined,
+      is_complete: todo.is_complete ?? undefined,
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    toast("Task updated successfully", {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    const res = await updateTodo(todo.id, data.task, data.is_complete);
+    let msg = "";
+
+    if (!res) msg = `Failed to update ${data.task}.`;
+    else msg = "Task updated successfully";
+
+    toast(msg, {
       description: (
         <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-          <code>{JSON.stringify(data, null, 2)}</code>
+          <code>{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
       position: "bottom-right",

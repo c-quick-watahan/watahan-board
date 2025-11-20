@@ -5,7 +5,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -18,10 +17,11 @@ import {
   getTodos,
   getUserId,
   Todo,
+  updateStatus,
 } from "@/supabase/database/todo";
 import { SkeletonCard } from "@/components/ui/skeleton-card";
 import { toast } from "sonner";
-import { refresh } from "next/cache";
+import { AddButton } from "@/components/add-btn";
 
 function truncateString(str: string) {
   const maxLength: number = 30;
@@ -47,6 +47,26 @@ export default function Instruments() {
 
     fetchData();
   }, []);
+
+  const handleStatusUpdate = async (
+    id: number,
+    is_complete: boolean | null
+  ) => {
+    if (is_complete == null) throw "is null";
+    const res = await updateStatus(id, !is_complete);
+    if (!res) throw "Unsuccessful status update";
+
+    const todos = await getTodos();
+    setTodos(todos);
+    toast("Status updated", {
+      description: (
+        <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
+          <code>{JSON.stringify(id, null, 2)}</code>
+        </pre>
+      ),
+      position: "bottom-right",
+    });
+  };
 
   const handleDelete = async (id: number) => {
     const response = await deleteTodo(id);
@@ -74,7 +94,7 @@ export default function Instruments() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            Your Tasks: {userId}
+            Your Tasks: {userId} <AddButton />
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
             {todos?.length} tasks total
@@ -123,6 +143,9 @@ export default function Instruments() {
                     variant={item.is_complete ? "outline" : "default"}
                     className="flex-1"
                     size="sm"
+                    onClick={async () =>
+                      handleStatusUpdate(item.id, item.is_complete)
+                    }
                   >
                     {item.is_complete ? "Reopen" : "Complete"}
                   </Button>
