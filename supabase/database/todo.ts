@@ -2,7 +2,6 @@
 
 import { Tables } from "@/database.types"
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
 
 export type Todo = Tables<"todos">;
 
@@ -25,11 +24,39 @@ export async function getTodos(): Promise<Todo[]> {
   const { data, error } = await supabase
     .from("todos")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("id");
+
   if (error) throw error;
+  return data;
+}
 
-  revalidatePath("/todos");
+export async function updateTodo(id: number, task: string, is_complete: boolean): Promise<Todo[]> {
+  const supabase = await createClient();
 
+  const { data, error } = await supabase
+    .from("todos")
+    .update({task, is_complete})
+    .eq('id', id)
+    .select()
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateStatus(id: number, is_complete: boolean) : Promise<Todo>{
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("todos")
+    .update({is_complete})
+    .eq('id', id)
+    .select()
+    .single();
+
+
+  if (error) throw `Failed in todo.ts ${error}`;
+  console.log(data);
   return data;
 }
 
@@ -40,3 +67,15 @@ export async function deleteTodo(id: number) {
 
   return response;
 }
+export async function getTodoById(id: number){
+  const supabase = await createClient();
+
+  const { data: todo } = await supabase
+    .from("todos")
+    .select()
+    .eq("id", id)
+    .single();
+
+    return todo;
+}
+    
