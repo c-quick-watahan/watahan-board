@@ -41,8 +41,8 @@ export function EditForm({ todo }: { todo: Todo }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      task: todo.task ?? undefined,
-      is_complete: todo.is_complete ?? undefined,
+      task: todo.task,
+      is_complete: todo.is_complete,
     },
   });
 
